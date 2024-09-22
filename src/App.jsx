@@ -1,45 +1,39 @@
-import { useState } from "react"
+import React, { useEffect, useState } from 'react'
 
-function App() {
-  const [text,setText] = useState("Hello");
-  const inputHandler = (e) =>{
-    setText(e.target.value)
-  }
-const clearVal = () =>{
-  setText("Text is gone")
-}
-  return (
-    <>
+import Todos from './components/Todos'
+import Search from './components/Search'
+/*useEffect is for all work before render components ||
+ render when value change in [] called "watch dependencies";*/
+
+const App = () => {
+const [todos,setTodo] = useState([])
+
+
+ const fetchTodo = async() => {
+  const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+  const data = await response.json();
+    setTodo(data);
+ }
+
+  useEffect(() => {
+    fetchTodo();
+  },[])
+
+  
+
+  return (<section className="w-1/2 mx-auto">
+        <Search todos={todos} setTodo={setTodo} />
     <div>
-      <h1>{text}</h1>
-      <p>Lorem ipsum dolor sit amet consectetur adipiscing elit bibendum dignissim a,
-         cum porttitor risus facilisis sociosqu vulputate tellus proin orci. 
-         Suspendisse gravida turpis molestie blandit mollis pretium mi iaculis 
-         phasellus feugiat rhoncus justo, dui lectus taciti integer aptent nibh risus 
-         tincidunt ante euismod convallis. Ultricies eu curae mus ligula accumsan non
-          in habitant vel fames, nunc quisque at vivamus senectus ullamcorper semper primis 
-          purus hendrerit lobortis, condimentum odio porttitor gravida cursus himenaeos et
-         aenean scelerisque.
-      </p>
+    <p className='text-right mt-5 font-medium'>total todos - {todos.length}</p>
+    {
+    todos.length ? <div className='grid grid-cols-2 gap-3 mt-6 '>
+          {todos.map(todo =>(
+            <Todos todo={todo} key={todo.id} />
+            ))} </div> 
+    : (<p className='text-medium text-red-600 text-center'>There is no todos!</p>)
+    }
     </div>
-    <div>
-      <h1>{text}</h1>
-      <p>Lorem ipsum dolor sit amet consectetur adipiscing elit bibendum dignissim a,
-         cum porttitor risus facilisis sociosqu vulputate tellus proin orci. 
-         Suspendisse gravida turpis molestie blandit mollis pretium mi iaculis 
-         phasellus feugiat rhoncus justo, dui lectus taciti integer aptent nibh risus 
-         tincidunt ante euismod convallis. Ultricies eu curae mus ligula accumsan non
-          in habitant vel fames, nunc quisque at vivamus senectus ullamcorper semper primis 
-          purus hendrerit lobortis, condimentum odio porttitor gravida cursus himenaeos et
-         aenean scelerisque.
-      </p>
-    </div>
-    
-    
-      <input type="text" onChange={inputHandler} />
-      <button onClick={clearVal}>Click</button>
-    </>
-  )
+  </section>)
 }
 
 export default App
